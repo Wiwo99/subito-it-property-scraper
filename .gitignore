@@ -1,0 +1,29 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# dotenv environment variables file
+.env
+.env.*
+
+# Apify storage
+apify_storage/
+storage/
+.apify/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+Thumbs.db
