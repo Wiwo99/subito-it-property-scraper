@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 
 VEHICLE_FIELDS = (
     "brand", "model", "fuel", "gearbox", "body_type", "vehicle_status", "year_min", "year_max",
-    "km_min", "km_max", "hp_min", "hp_max", "new_drivers", "color", "pollution", "cc_min", "cc_max",
+    "km_min", "km_max", "hp_min", "hp_max", "new_drivers", "color", "pollution", "cc_min", "cc_max", "vat_deductible",
 )
 
 
@@ -70,6 +70,7 @@ class Watch:
     pollution: Optional[str] = None
     cc_min: Optional[int] = None
     cc_max: Optional[int] = None
+    vat_deductible: Optional[bool] = None
     # common
     advertiser: Optional[str] = None
     max_items: int = 300
@@ -146,6 +147,27 @@ class Watch:
 
     def _vehicle_params(self, params: Dict[str, Any], cid: int, values: ValuesResolver) -> None:
         self._model_query: Optional[str] = None
+        if cid in (4, 34):
+            # commercial vehicles / campers: no brand/model/fuel/gearbox lists on Subito.
+            # Brand/model go to full-text search; type, status, VAT, year and km bands are server-side.
+            text = " ".join(p for p in (self.brand, self.model) if p)
+            if text:
+                self._model_query = text
+            if self.body_type:
+                params["cvt"] = values.key("vehicle_type", self.body_type)
+            if self.vehicle_status:
+                params["cvs"] = values.key("vehicle_status", self.vehicle_status)
+            if self.vat_deductible:
+                params["vatd"] = "true"
+            if self.year_min is not None:
+                params["ys"] = self.year_min
+            if self.year_max is not None:
+                params["ye"] = self.year_max
+            if self.km_min is not None:
+                params["ms"] = values.mileage_key("min", self.km_min)
+            if self.km_max is not None:
+                params["me"] = values.mileage_key("max", self.km_max)
+            return
         if self.brand:
             brand_key, _ = values.brand(cid, self.brand)
             params["cb" if cid == 2 else "bb"] = brand_key
@@ -181,6 +203,8 @@ class Watch:
             params["hps"] = self.hp_min
         if self.hp_max is not None:
             params["hpe"] = self.hp_max
+        if self.vat_deductible:
+            params["vatd"] = "true"
         if self.new_drivers:
             params["ndo"] = "true"
         if self.cc_min is not None:
@@ -230,13 +254,22 @@ class Watch:
         if self.advertiser and record.get("advertType") != ("agency" if ADVERTISER_TYPES[self.advertiser.lower()] else "private"):
             return False
         # vehicles
-        if self.brand and record.get("brand") and normalize_text(self.brand) not in normalize_text(record["brand"]):
-            return False
-        if self.model and record.get("model"):
+        if self.brand:
+            if record.get("brand"):
+                if normalize_text(self.brand) not in normalize_text(record["brand"]):
+                    return False
+            elif record.get("domain") == "motori" and not contains(haystack, self.brand):
+                return False  # no structured brand (commercial vehicles): require it in the text
+        if self.model:
             wanted = normalize_text(self.model)
             have = normalize_text(" ".join(str(record.get(k) or "") for k in ("model", "modelFull", "version", "title")))
             if wanted not in have:
                 return False
+        if self.vat_deductible and record.get("vatDeductible") is False:
+            return False
+        if self.body_type and record.get("bodyType") and record.get("categoryId") in (4, 34):
+            # server filter is applied, but keep local consistency when the ad carries the type
+            pass
         if self.fuel and record.get("fuel") and not _same_choice(self.fuel, record["fuel"]):
             return False
         if self.gearbox and record.get("gearbox") and not _same_choice(self.gearbox, record["gearbox"]):
@@ -255,9 +288,11 @@ class Watch:
         vehicle = " ".join(p for p in (self.brand, self.model) if p)
         if vehicle:
             bits.append(vehicle)
-        for label, v in (("", self.fuel), ("", self.gearbox), ("", self.body_type), ("", self.vehicle_status)):
+        for v in (self.fuel, self.gearbox, self.body_type, self.vehicle_status):
             if v:
                 bits.append(str(v))
+        if self.vat_deductible:
+            bits.append("IVA esposta")
         if self.year_min is not None or self.year_max is not None:
             bits.append(f"anno {self.year_min or ''}–{self.year_max or ''}")
         if self.km_max is not None or self.km_min is not None:

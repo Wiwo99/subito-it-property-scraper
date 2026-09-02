@@ -313,7 +313,7 @@ dialog.closing{animation:zoomout var(--dur-m) var(--ease-em) forwards}
     <div class="field full"><label>Comune contiene</label><input id="fCity" type="text" placeholder="es. Treviglio"></div>
   </div>
   <div class="fgrid fsec" id="secMot" hidden>
-    <div class="field full sechead"><i data-lucide="car"></i>Motori</div>
+    <div class="field full sechead" id="secMotHead"><i data-lucide="car"></i>Motori</div>
     <div class="field"><label>Marca</label><select id="fBrand"><option value="">Tutte</option></select></div>
     <div class="field"><label>Modello contiene</label><input id="fModel" type="text" placeholder="es. Golf"></div>
     <div class="field"><label>Carburante</label><select id="fFuel"><option value="">Tutti</option></select></div>
@@ -370,9 +370,12 @@ dialog.closing{animation:zoomout var(--dur-m) var(--ease-em) forwards}
   DATA.watches.forEach((w,i) => { if (!w.color) w.color = palette[i % palette.length]; });
   for (const l of DATA.listings) { l.domain = l.domain || 'realestate'; l._text = norm([l.title, l.shortDescription, l.city, l.microLocation, l.province, l.advertiserName, l.brand, l.model, l.modelFull, l.version, l.fuel, l.gearbox, l.bodyType].join(' ')); l._title = norm([l.title, l.brand, l.model].join(' ')); }
   const hasRE = DATA.listings.some(l => l.domain === 'realestate'), hasMot = DATA.listings.some(l => l.domain === 'motori');
-  if (hasMot && !hasRE) { $('#brandName').textContent = 'Motori Radar'; document.title = 'Motori Radar'; $('.brand .logo').innerHTML = '<i data-lucide="car-front"></i>'; }
+  const vehIcon = t => ({motorbike:'bike', 'commercial-vehicle':'truck', camper:'caravan', boat:'ship', car:'car'})[t] || 'car';
+  const onlyCommercial = hasMot && !hasRE && DATA.listings.every(l => l.propertyType === 'commercial-vehicle');
+  if (onlyCommercial) { $('#brandName').textContent = 'Furgoni Radar'; document.title = 'Furgoni Radar'; $('.brand .logo').innerHTML = '<i data-lucide="truck"></i>'; }
+  else if (hasMot && !hasRE) { $('#brandName').textContent = 'Motori Radar'; document.title = 'Motori Radar'; $('.brand .logo').innerHTML = '<i data-lucide="car-front"></i>'; }
   else if (hasRE && !hasMot) { $('#brandName').textContent = 'Casa Radar'; document.title = 'Casa Radar'; }
-  $('#q').placeholder = hasMot && !hasRE ? 'Cerca per parole chiave… (es. golf gtd tetto)' : 'Cerca per parole chiave… (es. terrazzo ristrutturato)';
+  $('#q').placeholder = onlyCommercial ? 'Cerca per parole chiave… (es. daily ribaltabile gru)' : hasMot && !hasRE ? 'Cerca per parole chiave… (es. golf gtd tetto)' : 'Cerca per parole chiave… (es. terrazzo ristrutturato)';
   const save = () => LS.set('cr.state', state);
 
   // ---------- theme ----------
@@ -453,7 +456,7 @@ dialog.closing{animation:zoomout var(--dur-m) var(--ease-em) forwards}
     const medKm = median(all.filter(l=>l.mileageKm!=null).map(l=>l.mileageKm));
     const tiles = [
       {i:'sparkles', v:fresh, t:'nuovi dall’ultimo giro', a:true},
-      {i:hasMot && !hasRE ? 'car' : 'home', v:all.length, t:'annunci seguiti'},
+      {i:onlyCommercial ? 'truck' : hasMot && !hasRE ? 'car' : 'home', v:all.length, t:'annunci seguiti'},
       {i:'trending-down', v:drops, t:'ribassi di prezzo'},
       hasRE ? {i:'ruler', v: medSqm? fmtNum.format(medSqm)+' €' : '—', t:'mediana €/mq vendita'} : {i:'tag', v: medPrice? fmtNum.format(medPrice)+' €' : '—', t:'prezzo mediano'},
       hasMot && !hasRE ? {i:'gauge', v: medKm!=null? fmtNum.format(medKm) : '—', t:'km mediani'} : {i:'bell', v:DATA.watches.length, t:'ricerche attive'},
@@ -490,6 +493,7 @@ dialog.closing{animation:zoomout var(--dur-m) var(--ease-em) forwards}
     if (l.transactionType==='rent') tags.push(`<span class="tag"><i data-lucide="key-round"></i>Affitto</span>`);
     if (mot && l.vehicleStatus && l.vehicleStatus !== 'Usato') tags.push(`<span class="tag" style="background:#0B57D0"><i data-lucide="badge-check"></i>${esc(l.vehicleStatus)}</span>`);
     if (mot && l.forNewDrivers) tags.push(`<span class="tag" style="background:rgba(178,106,0,.9)"><i data-lucide="graduation-cap"></i>Neopatentati</span>`);
+    if (mot && l.vatDeductible) tags.push(`<span class="tag" style="background:rgba(11,110,79,.9)"><i data-lucide="receipt"></i>IVA esposta</span>`);
     const specs = [];
     if (mot) {
       if (l.year) specs.push(`<span class="spec"><i data-lucide="calendar"></i>${l.year}</span>`);
@@ -497,7 +501,7 @@ dialog.closing{animation:zoomout var(--dur-m) var(--ease-em) forwards}
       if (l.fuel) specs.push(`<span class="spec"><i data-lucide="fuel"></i>${esc(l.fuel)}</span>`);
       if (l.gearbox) specs.push(`<span class="spec"><i data-lucide="settings-2"></i>${esc(l.gearbox)}</span>`);
       if (l.powerCv) specs.push(`<span class="spec"><i data-lucide="zap"></i>${l.powerCv} CV</span>`);
-      if (l.bodyType) specs.push(`<span class="spec"><i data-lucide="${l.propertyType==='motorbike'?'bike':'car'}"></i>${esc(l.bodyType)}</span>`);
+      if (l.bodyType) specs.push(`<span class="spec"><i data-lucide="${vehIcon(l.propertyType)}"></i>${esc(l.bodyType)}</span>`);
       if (l.pollution) specs.push(`<span class="spec"><i data-lucide="leaf"></i>${esc(l.pollution)}</span>`);
     }
     if (l.areaSqm) specs.push(`<span class="spec"><i data-lucide="ruler"></i>${l.areaSqm} mq</span>`);
@@ -525,7 +529,7 @@ dialog.closing{animation:zoomout var(--dur-m) var(--ease-em) forwards}
           ${l.pricePerSqm ? `<span class="sqm">${fmtNum.format(l.pricePerSqm)} €/mq</span>` : ''}
         </div>
         <div class="title" data-open="${esc(l.adId)}">${highlight(l.title)}</div>
-        ${mot && (l.brand || l.model) ? `<div class="place"><i data-lucide="${l.propertyType==='motorbike'?'bike':'car-front'}"></i>${esc([l.brand, l.modelFull || l.model, l.version].filter(Boolean).join(' · '))}</div>` : ''}
+        ${mot && (l.brand || l.model) ? `<div class="place"><i data-lucide="${vehIcon(l.propertyType)}"></i>${esc([l.brand, l.modelFull || l.model, l.version].filter(Boolean).join(' · '))}</div>` : ''}
         <div class="place"><i data-lucide="map-pin"></i>${esc([l.microLocation, l.city].filter(Boolean).join(', '))}${l.provinceCode?` (${esc(l.provinceCode)})`:''}</div>
         <div class="specs">${specs.join('')}</div>
         ${l.shortDescription ? `<div class="desc">${highlight(l.shortDescription)}</div>` : ''}
@@ -594,6 +598,10 @@ dialog.closing{animation:zoomout var(--dur-m) var(--ease-em) forwards}
   }
   $('#secMot').hidden = !hasMot; $('#secRe').hidden = !hasRE;
   if (hasMot && !hasRE) $('#segAgency').innerHTML = '<i data-lucide="store"></i>Concessionario';
+  if (onlyCommercial) { $('#secMotHead').innerHTML = '<i data-lucide="truck"></i>Veicoli commerciali'; $('#fModel').placeholder = 'es. Daily, Transit, Ducato'; }
+  // hide motori fields that this dataset never fills (e.g. no brand/fuel/gearbox on commercial vehicles)
+  for (const [sel, key] of [['#fBrand','brand'],['#fFuel','fuel'],['#fGear','gearbox'],['#fBody','bodyType'],['#fStatus','vehicleStatus'],['#fHpMin','powerCv'],['#fNewDrivers','forNewDrivers']])
+    if (!DATA.listings.some(l => l[key] != null && l[key] !== false)) $(sel).closest('.field').hidden = true;
   $('#fNewDrivers').onclick = () => $('#fNewDrivers').classList.toggle('on');
   const openSheet = () => { syncSheet(); sheet.classList.add('on'); scrim.classList.add('on'); };
   const closeSheet = () => { sheet.classList.remove('on'); scrim.classList.remove('on'); };

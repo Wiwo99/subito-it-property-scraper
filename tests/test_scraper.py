@@ -238,3 +238,26 @@ def test_pack_uses_labels_not_levels():
         {"key": "000000", "value": "Altro allestimento", "level": 0, "label": "Versione"},
     ]}
     assert _pack(feat) == {"brand": "TOYOTA", "model": "Yaris Cross", "modelFull": "Yaris Cross", "version": None}
+
+
+def test_commercial_vehicle_watch():
+    class V(FakeValues):
+        def key(self, list_name, name):
+            if list_name == "vehicle_type":
+                return {"furgone": "8", "camion": "1"}[name.lower()]
+            return super().key(list_name, name)
+
+    w = Watch(id="w", name="w", region="lombardia", category="veicoli-commerciali", body_type="furgone", brand="Iveco", model="Daily",
+              year_min=2016, km_max=200000, price_max=25000, vat_deductible=True)
+    params = w.api_params(FakeGeo(), V())
+    # only type/status/vat/price go server-side; brand+model become the full-text query
+    assert params == {"c": 4, "t": "s", "r": 4, "pe": 25000, "cvt": "8", "vatd": "true", "ys": 2016, "me": "21"}
+    assert w.queries() == ["Iveco Daily"]
+    rec = {"domain": "motori", "categoryId": 4, "title": "Iveco Daily 35C16 furgone", "description": "", "price": 19000, "year": 2019,
+           "mileageKm": 120000, "vatDeductible": True, "bodyType": "Veicoli Commerciali fino a 35q", "advertType": "private"}
+    assert w.matches(rec)
+    assert not w.matches({**rec, "title": "Ford Transit"})
+    assert not w.matches({**rec, "year": 2012})
+    assert not w.matches({**rec, "mileageKm": 260000})
+    assert not w.matches({**rec, "vatDeductible": False})
+    assert w.matches({**rec, "vatDeductible": None})

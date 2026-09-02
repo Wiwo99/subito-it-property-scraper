@@ -1,12 +1,70 @@
 {
   "defaults": {
     "max_items": 300,
-    "transaction": "sale"
+    "transaction": "sale",
+    "category": "veicoli-commerciali"
   },
   "watches": [
     {
+      "id": "daily-furgone",
+      "name": "Iveco Daily furgone",
+      "region": "lombardia",
+      "body_type": "furgone",
+      "brand": "Iveco",
+      "model": "Daily",
+      "year_min": 2016,
+      "km_max": 200000,
+      "price_max": 25000,
+      "exclude": ["incidentato", "ricambi", "fermo", "motore rotto"],
+      "color": "#0B57D0"
+    },
+    {
+      "id": "furgoni-lombardia-privati",
+      "name": "Furgoni da privato (Lombardia)",
+      "region": "lombardia",
+      "body_type": "furgone",
+      "advertiser": "private",
+      "keywords": ["transit", "ducato", "master", "sprinter", "daily", "vito", "trafic", "expert", "jumpy", "doblo", "caddy", "transporter"],
+      "exclude": ["incidentato", "ricambi", "fermo", "cerco"],
+      "year_min": 2012,
+      "km_max": 250000,
+      "price_max": 15000,
+      "color": "#0B6E4F"
+    },
+    {
+      "id": "furgoni-iva-esposta",
+      "name": "Furgoni con IVA esposta",
+      "region": "lombardia",
+      "body_type": "furgone",
+      "vat_deductible": true,
+      "year_min": 2018,
+      "km_max": 150000,
+      "price_max": 22000,
+      "exclude": ["incidentato", "ricambi"],
+      "color": "#6750A4"
+    },
+    {
+      "id": "ribaltabili",
+      "name": "Ribaltabili e cassonati",
+      "region": "lombardia",
+      "keywords": ["ribaltabile", "cassone", "cassonato", "sponda idraulica"],
+      "exclude": ["incidentato", "ricambi", "cerco"],
+      "price_max": 30000,
+      "color": "#B26A00"
+    },
+    {
+      "id": "camion-oltre-35q",
+      "name": "Camion oltre 35q",
+      "body_type": "camion",
+      "keywords": ["motrice", "centinato", "scarrabile", "gru"],
+      "exclude": ["ricambi", "cerco"],
+      "price_max": 60000,
+      "color": "#B3261E"
+    },
+    {
       "id": "golf-diesel-automatica",
-      "name": "Golf diesel automatica",
+      "name": "Golf diesel automatica (esempio auto)",
+      "enabled": false,
       "region": "lombardia",
       "category": "auto",
       "brand": "Volkswagen",
@@ -16,71 +74,19 @@
       "year_min": 2017,
       "km_max": 130000,
       "price_max": 18000,
-      "exclude": ["incidentata", "sinistrata", "motore rotto", "da riparare", "ricambi"],
-      "color": "#0B57D0"
-    },
-    {
-      "id": "panda-neopatentati",
-      "name": "Panda per neopatentati",
-      "region": "lombardia",
-      "category": "auto",
-      "brand": "Fiat",
-      "model": "Panda",
-      "new_drivers": true,
-      "year_min": 2012,
-      "km_max": 150000,
-      "price_max": 8000,
-      "advertiser": "private",
-      "exclude": ["incidentata", "ricambi"],
-      "color": "#B26A00"
-    },
-    {
-      "id": "suv-ibrido-km0",
-      "name": "SUV ibrido Km0 / nuovo",
-      "region": "lombardia",
-      "category": "auto",
-      "body_type": "suv",
-      "fuel": "ibrida",
-      "vehicle_status": "km0",
-      "price_max": 30000,
-      "color": "#0B6E4F"
-    },
-    {
-      "id": "tenere-700",
-      "name": "Yamaha Ténéré 700",
-      "category": "moto",
-      "brand": "Yamaha",
-      "model": "Ténéré 700",
-      "price_max": 9500,
-      "exclude": ["incidentata", "ricambi"],
-      "color": "#6750A4"
-    },
-    {
-      "id": "scooter-125-milano",
-      "name": "Scooter 125 a Milano",
-      "region": "lombardia",
-      "province": "milano",
-      "category": "moto",
-      "body_type": "scooter",
-      "cc_min": 125,
-      "cc_max": 125,
-      "year_min": 2016,
-      "price_max": 2500,
-      "exclude": ["incidentato", "ricambi", "fermo"],
-      "color": "#B3261E"
+      "color": "#7D5260"
     },
     {
       "id": "bilocale-milano",
-      "name": "Bilocale Milano",
+      "name": "Bilocale Milano (esempio immobili)",
       "enabled": false,
       "region": "lombardia",
       "province": "milano",
       "category": "appartamenti",
       "keywords": ["bilocale", "2 locali"],
-      "exclude": ["asta", "nuda proprietà", "cercasi"],
+      "exclude": ["asta", "nuda proprietà"],
       "price_max": 260000,
-      "size_min": 40,
-      "color": "#7D5260"
+      "color": "#386641"
     }
   ]
 }

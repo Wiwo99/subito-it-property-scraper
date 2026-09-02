@@ -24,6 +24,7 @@ LISTS: Dict[str, str] = {
     "gearbox": "gears/types",
     "car_type": "cars/types",
     "motorbike_type": "motorbikes/types",
+    "vehicle_type": "vehicles/types",
     "pollution": "pollution/types",
     "vehicle_status": "vehicle_status",
     "color": "colors/types",
@@ -39,6 +40,14 @@ ALIASES: Dict[str, Dict[str, str]] = {
     "vehicle_status": {"used": "usato", "km 0": "km0", "km-0": "km0", "zero km": "km0", "new": "nuovo"},
     "car_type": {"suv": "suv/fuoristrada", "fuoristrada": "suv/fuoristrada", "sw": "station wagon", "familiare": "station wagon", "city car": "utilitaria", "cabriolet": "cabrio"},
     "motorbike_type": {"enduro": "cross / enduro", "cross": "cross / enduro", "naked": "naked", "custom": "custom / café racer", "cafe racer": "custom / café racer"},
+    "vehicle_type": {
+        "furgone": "veicoli commerciali fino a 35q", "furgoni": "veicoli commerciali fino a 35q", "van": "veicoli commerciali fino a 35q",
+        "commerciali": "veicoli commerciali fino a 35q", "fino a 35q": "veicoli commerciali fino a 35q", "35q": "veicoli commerciali fino a 35q",
+        "camion": "veicoli industriali oltre i 35q", "autocarro": "veicoli industriali oltre i 35q", "autocarri": "veicoli industriali oltre i 35q",
+        "industriali": "veicoli industriali oltre i 35q", "oltre 35q": "veicoli industriali oltre i 35q", "truck": "veicoli industriali oltre i 35q",
+        "trattore": "trattori agricoli", "trattori": "trattori agricoli",
+        "agricole": "macchine agricole", "edili": "macchine edili",
+    },
 }
 
 

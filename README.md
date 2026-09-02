@@ -90,9 +90,10 @@ Modifica `watches.json`:
 | `title_only` | cerca solo nel titolo |
 | `price_min/max`, `size_min/max`, `rooms_min/max` | range numerici (applicati anche lato Subito) |
 | `brand`, `model` | veicoli: marca e modello per nome (`Volkswagen`, `Golf`). Modello ambiguo (più generazioni) → cercato in full-text |
-| `fuel`, `gearbox`, `body_type`, `vehicle_status` | `diesel`/`benzina`/`gpl`/`metano`/`elettrica`/`ibrida` · `manuale`/`automatico` · auto: `utilitaria`/`berlina`/`station wagon`/`suv`/`monovolume`/`cabrio`; moto: `sport`/`enduro`/`naked`/`scooter`/`custom`/`turismo` · `usato`/`km0`/`nuovo` |
+| `fuel`, `gearbox`, `body_type`, `vehicle_status` | `diesel`/`benzina`/`gpl`/`metano`/`elettrica`/`ibrida` · `manuale`/`automatico` · auto: `utilitaria`/`berlina`/`station wagon`/`suv`/`monovolume`/`cabrio`; moto: `sport`/`enduro`/`naked`/`scooter`/`custom`/`turismo`; veicoli commerciali: `furgone` (fino a 35q), `camion` (oltre 35q), `trattore`, `macchine agricole`, `macchine edili`, `accessori` · `usato`/`km0`/`nuovo` |
 | `year_min/max`, `km_min/max`, `hp_min/max`, `cc_min/max` | anno, chilometri, CV, cilindrata (moto) |
 | `new_drivers` | `true` = solo auto per neopatentati |
+| `vat_deductible` | `true` = solo annunci con IVA esposta (utile per i veicoli commerciali) |
 | `vehicle_color`, `pollution` | colore veicolo (`bianco`, `nero`…), classe emissioni (`Euro 6`) |
 | `advertiser` | `private` o `agency` |
 | `max_items` | massimo annunci per keyword (default 300) |
@@ -102,7 +103,24 @@ Il matching locale ignora accenti e maiuscole ed è a **parola intera**: `biloca
 I filtri veicolo vengono inviati a Subito (chiavi risolte via `hades.subito.it/v1/values`, cache in `data/values_cache.json`)
 e ricontrollati in locale. La dashboard mostra solo gli annunci delle watch attive (`enabled: true`); `subito build --all` include il resto.
 
+**Veicoli commerciali** (`category: veicoli-commerciali`): Subito filtra lato server per tipologia (`body_type`), stato, IVA,
+anno, km e prezzo. Non esiste una lista marche/modelli: `brand`/`model` vengono cercati nel testo dell'annuncio (e ricontrollati
+in locale), così come `fuel`/`gearbox` non sono disponibili per questa categoria.
+
 Esempio motori:
+
+```json
+{
+  "id": "daily-furgone",
+  "name": "Iveco Daily furgone",
+  "region": "lombardia",
+  "category": "veicoli-commerciali",
+  "body_type": "furgone",
+  "brand": "Iveco", "model": "Daily",
+  "year_min": 2016, "km_max": 200000, "price_max": 25000,
+  "exclude": ["incidentato", "ricambi", "fermo"]
+}
+```
 
 ```json
 {

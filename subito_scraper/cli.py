@@ -75,6 +75,7 @@ def cmd_search(args: argparse.Namespace) -> int:
         hp_min=args.hp_min,
         hp_max=args.hp_max,
         new_drivers=args.new_drivers,
+        vat_deductible=args.vat or None,
         cc_min=args.cc_min,
         cc_max=args.cc_max,
         advertiser=args.advertiser,
@@ -102,7 +103,7 @@ def cmd_search(args: argparse.Namespace) -> int:
         for rec in records:
             price = f"{rec['price']:>9,} €".replace(",", ".") if rec.get("price") else "      n.d."
             if rec.get("domain") == "motori":
-                extra = f"{rec.get('year') or '':>4} {str(rec.get('mileageKm') or '?'):>7} km {str(rec.get('fuel') or ''):<9} {str(rec.get('gearbox') or ''):<10}"
+                extra = f"{rec.get('year') or '':>4} {str(rec.get('mileageKm') or '?'):>7} km {str(rec.get('fuel') or rec.get('bodyType') or ''):<22.22} {str(rec.get('gearbox') or ('IVA' if rec.get('vatDeductible') else '')):<10}"
             else:
                 sqm = f"{rec['pricePerSqm']:>5} €/mq" if rec.get("pricePerSqm") else "          "
                 extra = f"{sqm}  {rec.get('areaSqm') or '?':>4} mq"
@@ -169,6 +170,9 @@ def cmd_values(args: argparse.Namespace) -> int:
     client = _client(args)
     values = _values(client)
     cid = category_id(args.category)
+    if args.what in ("brands", "models") and cid not in (2, 3):
+        print("brands/models exist only for auto and moto; commercial vehicles have no brand list (use keywords)", file=sys.stderr)
+        return 2
     if args.what == "brands":
         path = "cars/brands" if cid == 2 else "motorbikes/brands"
     elif args.what == "models":
@@ -248,7 +252,7 @@ def build_parser() -> argparse.ArgumentParser:
     g_mo.add_argument("--model", help="e.g. Golf, Ténéré 700")
     g_mo.add_argument("--fuel", help="benzina|diesel|gpl|metano|elettrica|ibrida")
     g_mo.add_argument("--gearbox", help="manuale|automatico")
-    g_mo.add_argument("--body", help="auto: utilitaria|berlina|station wagon|suv|monovolume|cabrio|coupé; moto: sport|enduro|naked|scooter|custom|turismo")
+    g_mo.add_argument("--body", help="auto: utilitaria|berlina|station wagon|suv|monovolume|cabrio; moto: sport|enduro|naked|scooter|custom|turismo; veicoli commerciali: furgone|camion|trattore|macchine agricole|macchine edili")
     g_mo.add_argument("--status", help="usato|km0|nuovo")
     g_mo.add_argument("--year-min", type=int)
     g_mo.add_argument("--year-max", type=int)
@@ -259,6 +263,7 @@ def build_parser() -> argparse.ArgumentParser:
     g_mo.add_argument("--cc-min", type=int, help="moto: min cc")
     g_mo.add_argument("--cc-max", type=int, help="moto: max cc")
     g_mo.add_argument("--new-drivers", action="store_true", help="only cars for new drivers (neopatentati)")
+    g_mo.add_argument("--vat", action="store_true", help="only ads with VAT shown (IVA esposta)")
     s.add_argument("--advertiser", choices=sorted(ADVERTISER_TYPES))
     s.add_argument("-n", "--max", type=int, default=100, help="max listings per keyword (default 100)")
     s.add_argument("-o", "--out", help="output file (.csv/.json/.jsonl/.xlsx)")
@@ -297,7 +302,7 @@ def build_parser() -> argparse.ArgumentParser:
     g.set_defaults(func=cmd_geo)
 
     v = sub.add_parser("values", help="list vehicle filter values (brands, models, fuel, gearbox, …)")
-    v.add_argument("what", choices=["brands", "models", "fuel", "gearbox", "car_type", "motorbike_type", "vehicle_status", "pollution", "color"])
+    v.add_argument("what", choices=["brands", "models", "fuel", "gearbox", "car_type", "motorbike_type", "vehicle_type", "vehicle_status", "pollution", "color"])
     v.add_argument("-c", "--category", default="auto", help="auto|moto (for brands/models)")
     v.add_argument("--brand", help="brand name, for models")
     v.set_defaults(func=cmd_values)
