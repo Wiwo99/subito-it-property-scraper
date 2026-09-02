@@ -1,0 +1,48 @@
+name: Scrape watches and publish dashboard
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"   # every 3 hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scrape
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install
+        run: uv sync --no-dev
+
+      - name: Run watches, build dashboard
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          NOTIFY_WEBHOOK_URL: ${{ secrets.NOTIFY_WEBHOOK_URL }}
+        run: uv run subito run --build --notify --ignore-errors --prune-days 45 --delay 1.2
+
+      - name: Run tests
+        run: uv run --extra dev pytest -q
+
+      - name: Commit data and dashboard
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/subito.db docs/
+          if git diff --cached --quiet; then
+            echo "nothing changed"
+          else
+            git commit -m "chore(data): scrape $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push
+          fi

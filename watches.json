@@ -1,0 +1,44 @@
+{
+  "defaults": {
+    "max_items": 300,
+    "category": "appartamenti",
+    "transaction": "sale"
+  },
+  "watches": [
+    {
+      "id": "bilocale-milano",
+      "name": "Bilocale Milano",
+      "region": "lombardia",
+      "province": "milano",
+      "keywords": ["bilocale", "2 locali"],
+      "exclude": ["asta", "nuda proprietà", "cercasi"],
+      "price_max": 260000,
+      "size_min": 40,
+      "color": "#6750A4"
+    },
+    {
+      "id": "terrazzo-bergamo",
+      "name": "Con terrazzo a Bergamo",
+      "region": "lombardia",
+      "province": "bergamo",
+      "keywords": ["terrazzo", "terrazza", "attico"],
+      "exclude": ["asta"],
+      "price_min": 100000,
+      "price_max": 350000,
+      "rooms_min": 3,
+      "color": "#0B6E4F"
+    },
+    {
+      "id": "affitto-bologna-privati",
+      "name": "Affitto Bologna da privato",
+      "region": "emilia-romagna",
+      "province": "bologna",
+      "transaction": "rent",
+      "keywords": ["arredato", "ristruttur*"],
+      "exclude": ["stanza", "posto letto", "studenti"],
+      "advertiser": "private",
+      "price_max": 1400,
+      "color": "#B3261E"
+    }
+  ]
+}

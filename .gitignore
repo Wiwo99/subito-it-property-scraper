@@ -27,3 +27,16 @@ storage/
 .vscode/
 *.swp
 Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+dist/
+*.egg-info/
+.pytest_cache/
+
+# Scraper runtime data (DB is committed only by the GitHub Action)
+data/*.db-journal
+data/geo_cache.json
+exports/
