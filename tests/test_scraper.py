@@ -130,3 +130,111 @@ def test_cli_delay_accepted_in_both_positions():
     assert parser.parse_args(["--delay", "1.5", "regions"]).delay == 1.5
     assert parser.parse_args(["run", "--delay", "1.2"]).delay == 1.2
     assert parser.parse_args(["run"]).delay == 0.7
+
+
+MOTORI = json.loads((Path(__file__).parent / "fixture_motori.json").read_text(encoding="utf-8"))
+
+
+def test_normalize_car_and_bike():
+    from subito_scraper.models import domain_of
+
+    car = normalize(MOTORI["car"])
+    assert car["domain"] == "motori" and car["propertyType"] == "car" and car["categoryId"] == 2
+    assert car["brand"] and car["model"] and car["year"] and car["mileageKm"]
+    assert car["fuel"] and car["gearbox"] and car["powerCv"] and car["powerKw"]
+    assert "pricePerSqm" not in car and car["price"] > 0
+    bike = normalize(MOTORI["bike"])
+    assert bike["domain"] == "motori" and bike["propertyType"] == "motorbike"
+    assert bike["brand"] == "Yamaha" and bike["year"] and bike["mileageKm"] is not None
+    assert domain_of(7) == "realestate" and domain_of(3) == "motori"
+    assert category_id("auto") == 2 == category_id("cars") and category_id("moto") == 3 and category_id("camper") == 34
+
+
+class FakeValues:
+    def brand(self, cid, name):
+        return ("000083", "ALFA ROMEO") if cid == 2 else ("000015", "Yamaha")
+
+    def model(self, cid, brand_key, name):
+        return "000319" if name.lower() == "145" else None
+
+    def key(self, list_name, name):
+        return {"fuel": {"diesel": "2"}, "gearbox": {"automatico": "2"}, "car_type": {"suv": "5"}, "vehicle_status": {"km0": "2"}}[list_name][name.lower()]
+
+    def mileage_key(self, kind, km):
+        return "21" if kind == "max" else "1"
+
+
+class FakeGeo:
+    def resolve(self, region, province=None, town=None):
+        return {"r": 4}
+
+
+def test_vehicle_watch_params_and_queries():
+    w = Watch(id="w", name="w", region="lombardia", category="auto", brand="Alfa Romeo", model="145", fuel="diesel", gearbox="automatico",
+              body_type="suv", vehicle_status="km0", year_min=2015, year_max=2020, km_max=100000, hp_min=100, new_drivers=True, price_max=15000)
+    params = w.api_params(FakeGeo(), FakeValues())
+    assert params == {"c": 2, "t": "s", "r": 4, "pe": 15000, "cb": "000083", "cm": "000319", "fl": "2", "gr": "2", "ct": "5", "cvs": "2",
+                      "ys": 2015, "ye": 2020, "me": "21", "hps": 100, "ndo": "true"}
+    assert w.queries() == [None]
+    # ambiguous model -> full-text query, combined with keywords when present
+    w2 = Watch(id="w", name="w", category="auto", brand="Alfa Romeo", model="Giulietta", keywords=["unico proprietario"])
+    p2 = w2.api_params(FakeGeo(), FakeValues())
+    assert "cm" not in p2 and w2.queries() == ["Giulietta unico proprietario"]
+    w3 = Watch(id="w", name="w", category="moto", brand="Yamaha", model="Ténéré 700")
+    assert w3.api_params(FakeGeo(), FakeValues())["bb"] == "000015" and w3.queries() == ["Ténéré 700"]
+    with pytest.raises(ValueError):
+        Watch(id="w", name="w", category="appartamenti", brand="Fiat").api_params(FakeGeo(), FakeValues())
+
+
+def test_vehicle_local_matching():
+    car = normalize(MOTORI["car"])  # Alfa Romeo MiTo, diesel, manuale, 2011, 172000 km, 120 cv
+    assert Watch(id="w", name="w", category="auto", brand="alfa romeo", model="mito").matches(car)
+    assert not Watch(id="w", name="w", category="auto", brand="Fiat").matches(car)
+    assert not Watch(id="w", name="w", category="auto", gearbox="automatico").matches(car)
+    assert Watch(id="w", name="w", category="auto", fuel="gasolio").matches(car)
+    assert not Watch(id="w", name="w", category="auto", year_min=2015).matches(car)
+    assert not Watch(id="w", name="w", category="auto", km_max=100000).matches(car)
+    assert Watch(id="w", name="w", category="auto", hp_min=100, hp_max=150).matches(car)
+    assert not Watch(id="w", name="w", category="auto", exclude=["mito"]).matches(car)
+
+
+def test_mileage_band_mapping():
+    from subito_scraper.values import ValuesResolver
+
+    class C:
+        def get(self, url):
+            if url.endswith("mileage/min"):
+                return {"values": [{"key": "0", "value": "Km 0"}, {"key": "1", "value": "0"}, {"key": "2", "value": "5.000"}, {"key": "3", "value": "10.000"}, {"key": "21", "value": "100.000"}]}
+            return {"values": [{"key": "0", "value": "Km 0"}, {"key": "1", "value": "4.999"}, {"key": "20", "value": "99.999"}, {"key": "21", "value": "109.999"}, {"key": "36", "value": "499.999"}]}
+
+    v = ValuesResolver(C())
+    assert v.mileage_key("min", 7000) == "2" and v.mileage_key("min", 0) == "1" and v.mileage_key("min", 999999) == "21"
+    assert v.mileage_key("max", 100000) == "21" and v.mileage_key("max", 4000) == "1" and v.mileage_key("max", 999999) == "36"
+
+
+def test_watch_color_keys():
+    w = Watch.from_dict({"id": "a", "color": "#123456", "vehicle_color": "nero"})
+    assert w.color_hex == "#123456" and w.color == "nero"
+    w2 = Watch.from_dict({"id": "b", "color": "rosso"})
+    assert w2.color == "rosso" and w2.color_hex is None
+
+
+def test_dashboard_hides_orphans(tmp_path):
+    rec = normalize(AD)
+    with Store(tmp_path / "t.db") as store:
+        store.upsert_listing(rec)
+        store.record_match("old", rec["adId"])
+        assert build_payload(store, [Watch(id="new", name="n")])["listings"] == []
+        assert len(build_payload(store, [Watch(id="new", name="n")], include_orphans=True)["listings"]) == 1
+        assert len(build_payload(store, [Watch(id="old", name="o")])["listings"]) == 1
+
+
+def test_pack_uses_labels_not_levels():
+    from subito_scraper.models import _pack
+
+    feat = {"all": [
+        {"key": "000103", "value": "TOYOTA", "level": 0, "label": "Marca"},
+        {"key": "004796", "value": "Yaris Cross", "group_label": "Yaris Cross", "level": 1, "label": "Modello"},
+        {"key": "000000", "value": "Altro allestimento", "level": 0, "label": "Versione"},
+    ]}
+    assert _pack(feat) == {"brand": "TOYOTA", "model": "Yaris Cross", "modelFull": "Yaris Cross", "version": None}

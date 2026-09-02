@@ -1,0 +1,565 @@
+{
+ "car": {
+  "urn": "id:ad:5a903cff-784e-4ac8-abae-991bf0f1ac45:list:659217779",
+  "type": {
+   "key": "s",
+   "value": "In vendita",
+   "weight": 0
+  },
+  "category": {
+   "key": "2",
+   "value": "Auto",
+   "friendly_name": "auto",
+   "macrocategory_id": "1",
+   "weight": 1
+  },
+  "subject": "Alfa romeo MITO",
+  "body": "Vendesi alfa romeo MITO 1.6 JTD 88 kw 120 cv, 172000 km anno 2011 buone condizioni di carrozzeria e tagliandata",
+  "dates": {
+   "display": "2026-09-02 09:49:03",
+   "expiration": "2027-09-02 09:49:03",
+   "display_iso8601": "2026-09-02T09:49:03.082+0200",
+   "expiration_iso8601": "2027-09-02T09:49:03.082+0200"
+  },
+  "images": [
+   {
+    "uri": "imgid:0bf68c68-1ae1-48c3-94c6-8af41e334641",
+    "base_url": "https://s.sbito.it/img/0b/0bf68c68-1ae1-48c3-94c6-8af41e334641",
+    "cdn_base_url": "https://images.sbito.it/api/v1/sbt-ads-images-pro/images/0b/0bf68c68-1ae1-48c3-94c6-8af41e334641"
+   },
+   {
+    "uri": "imgid:c4c858f7-bf07-4d0d-bc3d-f142f61bc568",
+    "base_url": "https://s.sbito.it/img/c4/c4c858f7-bf07-4d0d-bc3d-f142f61bc568",
+    "cdn_base_url": "https://images.sbito.it/api/v1/sbt-ads-images-pro/images/c4/c4c858f7-bf07-4d0d-bc3d-f142f61bc568"
+   },
+   {
+    "uri": "imgid:f5680a1a-8bb9-4c82-bd0b-f757d749f485",
+    "base_url": "https://s.sbito.it/img/f5/f5680a1a-8bb9-4c82-bd0b-f757d749f485",
+    "cdn_base_url": "https://images.sbito.it/api/v1/sbt-ads-images-pro/images/f5/f5680a1a-8bb9-4c82-bd0b-f757d749f485"
+   }
+  ],
+  "images_360": [],
+  "features": [
+   {
+    "type": "list",
+    "uri": "/gearbox",
+    "label": "Cambio",
+    "values": [
+     {
+      "key": "1",
+      "value": "Manuale",
+      "weight": 1
+     }
+    ]
+   },
+   {
+    "type": "list",
+    "uri": "/car_type",
+    "label": "Carrozzeria",
+    "values": [
+     {
+      "key": "2",
+      "value": "Berlina",
+      "weight": 1
+     }
+    ]
+   },
+   {
+    "type": "list",
+    "uri": "/fuel",
+    "label": "Carburante",
+    "values": [
+     {
+      "key": "2",
+      "value": "Diesel",
+      "weight": 1
+     }
+    ]
+   },
+   {
+    "type": "number",
+    "uri": "/price",
+    "label": "Prezzo",
+    "values": [
+     {
+      "key": "2500",
+      "value": "2500 €"
+     }
+    ]
+   },
+   {
+    "type": "list",
+    "uri": "/seats",
+    "label": "Posti",
+    "values": [
+     {
+      "key": "3",
+      "value": "4",
+      "weight": 3
+     }
+    ]
+   },
+   {
+    "type": "pack",
+    "uri": "/car",
+    "label": "Auto",
+    "values": [
+     {
+      "key": "000083",
+      "value": "ALFA ROMEO",
+      "weight": 7,
+      "level": 0,
+      "label": "Marca"
+     },
+     {
+      "key": "003854",
+      "value": "MiTo",
+      "weight": 28,
+      "group_key": "001288",
+      "group_label": "MiTo",
+      "level": 1,
+      "label": "Modello"
+     },
+     {
+      "key": "078340",
+      "value": "MiTo 1.6 JTDm 16V Progression",
+      "weight": 123,
+      "level": 2,
+      "label": "Versione"
+     }
+    ]
+   },
+   {
+    "type": "list",
+    "uri": "/doors",
+    "label": "Numero di porte",
+    "values": [
+     {
+      "key": "1",
+      "value": "2/3",
+      "weight": 1
+     }
+    ]
+   },
+   {
+    "type": "bool",
+    "uri": "/newdrivers_only",
+    "label": "Per neopatentati",
+    "values": [
+     {
+      "key": "1",
+      "value": "Sì"
+     }
+    ]
+   },
+   {
+    "type": "bool",
+    "uri": "/vat_deductible",
+    "label": "Iva esposta",
+    "values": [
+     {
+      "key": "0",
+      "value": "No"
+     }
+    ]
+   },
+   {
+    "type": "list",
+    "uri": "/vehicle_status",
+    "label": "Condizioni del veicolo",
+    "values": [
+     {
+      "key": "1",
+      "value": "Usato",
+      "weight": 0
+     }
+    ]
+   },
+   {
+    "type": "list",
+    "uri": "/pollution",
+    "label": "Classe emissioni",
+    "values": [
+     {
+      "key": "6",
+      "value": "Euro 5",
+      "weight": 8
+     }
+    ]
+   },
+   {
+    "type": "list",
+    "uri": "/color",
+    "label": "Colore",
+    "values": [
+     {
+      "key": "2",
+      "value": "Grigio",
+      "weight": 2
+     }
+    ]
+   },
+   {
+    "type": "list",
+    "uri": "/mileage",
+    "label": "Km",
+    "values": [
+     {
+      "key": "28",
+      "value": "170.000 - 179.999",
+      "weight": 28
+     }
+    ]
+   },
+   {
+    "type": "number",
+    "uri": "/mileage_scalar",
+    "label": "Km",
+    "values": [
+     {
+      "key": "172000",
+      "value": "172000 Km"
+     }
+    ]
+   },
+   {
+    "type": "string",
+    "uri": "/power",
+    "label": "Potenza",
+    "values": [
+     {
+      "key": "88/120",
+      "value": "88 kW / 120 Cv",
+      "label": "Potenza"
+     }
+    ]
+   },
+   {
+    "type": "list",
+    "uri": "/year",
+    "label": "Anno di immatricolazione",
+    "values": [
+     {
+      "key": "2011",
+      "value": "2011",
+      "weight": 37
+     }
+    ]
+   },
+   {
+    "type": "string",
+    "uri": "/register_date",
+    "label": "Immatricolazione",
+    "values": [
+     {
+      "key": "01/2011",
+      "value": "01/2011",
+      "label": "Immatricolazione"
+     }
+    ]
+   },
+   {
+    "type": "list",
+    "uri": "/month",
+    "label": "Mese di immatricolazione",
+    "values": [
+     {
+      "key": "1",
+      "value": "Gennaio",
+      "weight": 0
+     }
+    ]
+   }
+  ],
+  "advertiser": {
+   "user_id": "144562670",
+   "name": "",
+   "company": false,
+   "type": 0
+  },
+  "geo": {
+   "region": {
+    "key": "2",
+    "uri": "/region",
+    "value": "Piemonte",
+    "friendly_name": "piemonte",
+    "label": "Regione",
+    "level": 0,
+    "neighbors": "2,1,3,4,8"
+   },
+   "city": {
+    "key": "6",
+    "uri": "/city",
+    "value": "Torino",
+    "label": "Provincia",
+    "friendly_name": "torino",
+    "short_name": "TO",
+    "level": 1,
+    "istat": "001",
+    "region_id": "2"
+   },
+   "town": {
+    "key": "001280",
+    "uri": "/town",
+    "value": "Trofarello",
+    "label": "Comune",
+    "level": 2,
+    "istat": "001280",
+    "region_id": "2",
+    "city_id": "6",
+    "has_zone": false,
+    "friendly_name": "trofarello",
+    "lat": 44.985939,
+    "lon": 7.740116
+   },
+   "uri": "/geo",
+   "label": "Comune",
+   "type": "geo"
+  },
+  "urls": {
+   "default": "https://www.subito.it/auto/alfa-romeo-mito-torino-659217779.htm",
+   "mobile": "https://www.subito.it/auto/alfa-romeo-mito-torino-659217779.htm"
+  }
+ },
+ "bike": {
+  "urn": "id:ad:8a72b632-ce73-437c-830a-5116731831da:list:659217929",
+  "type": {
+   "key": "s",
+   "value": "In vendita",
+   "weight": 0
+  },
+  "category": {
+   "key": "3",
+   "value": "Moto e Scooter",
+   "friendly_name": "moto-e-scooter",
+   "macrocategory_id": "1",
+   "weight": 3
+  },
+  "subject": "Yamaha tenere 700 2025",
+  "body": "Ultimo modello 8/25 7 anni di garanzia e soccorso stradale yamaha, secondo tagliando appena fatto come nuova mai fuoristrada",
+  "dates": {
+   "display": "2026-09-02 09:49:04",
+   "expiration": "2027-09-02 09:49:04",
+   "display_iso8601": "2026-09-02T09:49:04.058+0200",
+   "expiration_iso8601": "2027-09-02T09:49:04.058+0200"
+  },
+  "images": [
+   {
+    "uri": "imgid:1874ed18-e9a5-4d88-b0bc-11876fcdd584",
+    "base_url": "https://s.sbito.it/img/18/1874ed18-e9a5-4d88-b0bc-11876fcdd584",
+    "cdn_base_url": "https://images.sbito.it/api/v1/sbt-ads-images-pro/images/18/1874ed18-e9a5-4d88-b0bc-11876fcdd584"
+   },
+   {
+    "uri": "imgid:bc9bee5b-8598-4ba7-b6bb-6f3c124335db",
+    "base_url": "https://s.sbito.it/img/bc/bc9bee5b-8598-4ba7-b6bb-6f3c124335db",
+    "cdn_base_url": "https://images.sbito.it/api/v1/sbt-ads-images-pro/images/bc/bc9bee5b-8598-4ba7-b6bb-6f3c124335db"
+   },
+   {
+    "uri": "imgid:676d44b1-8028-4431-9163-2257eafcc2ee",
+    "base_url": "https://s.sbito.it/img/67/676d44b1-8028-4431-9163-2257eafcc2ee",
+    "cdn_base_url": "https://images.sbito.it/api/v1/sbt-ads-images-pro/images/67/676d44b1-8028-4431-9163-2257eafcc2ee"
+   },
+   {
+    "uri": "imgid:087707e7-18c2-4108-af3c-41658a51ec4c",
+    "base_url": "https://s.sbito.it/img/08/087707e7-18c2-4108-af3c-41658a51ec4c",
+    "cdn_base_url": "https://images.sbito.it/api/v1/sbt-ads-images-pro/images/08/087707e7-18c2-4108-af3c-41658a51ec4c"
+   },
+   {
+    "uri": "imgid:083fb4be-fd57-4021-a053-1df0ca1f26ba",
+    "base_url": "https://s.sbito.it/img/08/083fb4be-fd57-4021-a053-1df0ca1f26ba",
+    "cdn_base_url": "https://images.sbito.it/api/v1/sbt-ads-images-pro/images/08/083fb4be-fd57-4021-a053-1df0ca1f26ba"
+   },
+   {
+    "uri": "imgid:7ef083d3-55a5-4301-a6bb-919653b4c8c7",
+    "base_url": "https://s.sbito.it/img/7e/7ef083d3-55a5-4301-a6bb-919653b4c8c7",
+    "cdn_base_url": "https://images.sbito.it/api/v1/sbt-ads-images-pro/images/7e/7ef083d3-55a5-4301-a6bb-919653b4c8c7"
+   }
+  ],
+  "images_360": [],
+  "features": [
+   {
+    "type": "list",
+    "uri": "/motorbicycle_type",
+    "label": "Tipologia",
+    "values": [
+     {
+      "key": "2",
+      "value": "Cross / Enduro",
+      "weight": 1
+     }
+    ]
+   },
+   {
+    "type": "pack",
+    "uri": "/bike",
+    "label": "Moto",
+    "values": [
+     {
+      "key": "000015",
+      "value": "Yamaha",
+      "weight": 226,
+      "level": 0,
+      "label": "Marca"
+     },
+     {
+      "key": "003061",
+      "value": "Ténéré 700",
+      "weight": 98,
+      "level": 1,
+      "label": "Modello"
+     },
+     {
+      "key": "019870",
+      "value": "Low",
+      "weight": 3,
+      "level": 2,
+      "label": "Versione"
+     }
+    ]
+   },
+   {
+    "type": "number",
+    "uri": "/price",
+    "label": "Prezzo",
+    "values": [
+     {
+      "key": "9500",
+      "value": "9500 €"
+     }
+    ]
+   },
+   {
+    "type": "list",
+    "uri": "/vehicle_status",
+    "label": "Condizioni del veicolo",
+    "values": [
+     {
+      "key": "1",
+      "value": "Usato",
+      "weight": 0
+     }
+    ]
+   },
+   {
+    "type": "bool",
+    "uri": "/vat_deductible",
+    "label": "Iva esposta",
+    "values": [
+     {
+      "key": "0",
+      "value": "No"
+     }
+    ]
+   },
+   {
+    "type": "list",
+    "uri": "/mileage",
+    "label": "Km",
+    "values": [
+     {
+      "key": "2",
+      "value": "5.000 - 9.999",
+      "weight": 2
+     }
+    ]
+   },
+   {
+    "type": "number",
+    "uri": "/mileage_scalar",
+    "label": "Km",
+    "values": [
+     {
+      "key": "8100",
+      "value": "8100 Km"
+     }
+    ]
+   },
+   {
+    "type": "list",
+    "uri": "/year",
+    "label": "Anno di immatricolazione",
+    "values": [
+     {
+      "key": "2025",
+      "value": "2025",
+      "weight": 51
+     }
+    ]
+   },
+   {
+    "type": "string",
+    "uri": "/register_date",
+    "label": "Immatricolazione",
+    "values": [
+     {
+      "key": "08/2025",
+      "value": "08/2025",
+      "label": "Immatricolazione"
+     }
+    ]
+   },
+   {
+    "type": "list",
+    "uri": "/month",
+    "label": "Mese di immatricolazione",
+    "values": [
+     {
+      "key": "8",
+      "value": "Agosto",
+      "weight": 7
+     }
+    ]
+   }
+  ],
+  "advertiser": {
+   "user_id": "144562627",
+   "name": "",
+   "phone": "0",
+   "company": false,
+   "type": 0
+  },
+  "geo": {
+   "region": {
+    "key": "20",
+    "uri": "/region",
+    "value": "Sicilia",
+    "friendly_name": "sicilia",
+    "label": "Regione",
+    "level": 0,
+    "neighbors": "20,18"
+   },
+   "city": {
+    "key": "3",
+    "uri": "/city",
+    "value": "Catania",
+    "label": "Provincia",
+    "friendly_name": "catania",
+    "short_name": "CT",
+    "level": 1,
+    "istat": "087",
+    "region_id": "20"
+   },
+   "town": {
+    "key": "087015",
+    "uri": "/town",
+    "value": "Catania",
+    "label": "Comune",
+    "level": 2,
+    "istat": "087015",
+    "region_id": "20",
+    "city_id": "3",
+    "has_zone": false,
+    "friendly_name": "catania",
+    "lat": 37.50297,
+    "lon": 15.086964
+   },
+   "uri": "/geo",
+   "label": "Comune",
+   "type": "geo"
+  },
+  "urls": {
+   "default": "https://www.subito.it/moto-e-scooter/yamaha-tenere-700-2025-catania-659217929.htm",
+   "mobile": "https://www.subito.it/moto-e-scooter/yamaha-tenere-700-2025-catania-659217929.htm"
+  }
+ }
+}

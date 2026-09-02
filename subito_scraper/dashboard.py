@@ -15,48 +15,23 @@ from .watches import Watch
 TEMPLATE = Path(__file__).resolve().parent.parent / "dashboard" / "template.html"
 PLACEHOLDER = "/*__DASHBOARD_DATA__*/"
 
-COMPACT_FIELDS = (
-    "adId",
-    "detailUrl",
-    "title",
-    "shortDescription",
-    "transactionType",
-    "propertyType",
-    "categoryLabel",
-    "advertType",
-    "advertiserName",
-    "price",
-    "pricePerSqm",
-    "areaSqm",
-    "rooms",
-    "bathrooms",
-    "floor",
-    "buildingCondition",
-    "heatingType",
-    "energyClass",
-    "hasElevator",
-    "hasParking",
-    "hasBalcony",
-    "hasGarden",
-    "hasAirConditioning",
-    "isFurnished",
-    "region",
-    "province",
-    "provinceCode",
-    "city",
-    "microLocation",
-    "latitude",
-    "longitude",
-    "mainImageUrl",
-    "imageUrls",
-    "imageCount",
-    "datePosted",
-    "firstSeen",
-    "lastSeen",
+COMMON_FIELDS = (
+    "adId", "detailUrl", "title", "shortDescription", "domain", "transactionType", "propertyType", "categoryLabel",
+    "advertType", "advertiserName", "price", "region", "province", "provinceCode", "city", "microLocation",
+    "latitude", "longitude", "mainImageUrl", "imageUrls", "imageCount", "datePosted", "firstSeen", "lastSeen", "isUrgent",
+)
+REALESTATE_FIELDS = (
+    "pricePerSqm", "areaSqm", "rooms", "bathrooms", "floor", "buildingCondition", "heatingType", "energyClass",
+    "hasElevator", "hasParking", "hasBalcony", "hasGarden", "hasAirConditioning", "isFurnished",
+)
+MOTORI_FIELDS = (
+    "brand", "model", "modelFull", "version", "year", "registerDate", "mileageKm", "fuel", "gearbox", "bodyType", "doors",
+    "seats", "color", "pollution", "powerKw", "powerCv", "vehicleStatus", "forNewDrivers", "vatDeductible",
+    "warrantyMonths", "itemCondition", "shipLength",
 )
 
 
-def build_payload(store: Store, watches: List[Watch], new_window_hours: int = 36) -> Dict[str, Any]:
+def build_payload(store: Store, watches: List[Watch], new_window_hours: int = 36, include_orphans: bool = False) -> Dict[str, Any]:
     now = datetime.now(timezone.utc)
     matches = store.matches_by_listing()
     history = store.price_history()
@@ -64,13 +39,20 @@ def build_payload(store: Store, watches: List[Watch], new_window_hours: int = 36
     new_cutoff = (now - timedelta(hours=new_window_hours)).isoformat(timespec="seconds")
     # "new" = first seen after the previous full run (or within the window when there is no history)
     new_since = max(previous_run or "", new_cutoff) if previous_run else new_cutoff
+    active_ids = {w.id for w in watches if w.enabled}
 
     listings: List[Dict[str, Any]] = []
     for rec in store.listings():
         ad_id = rec["adId"]
-        compact = {k: rec.get(k) for k in COMPACT_FIELDS}
+        watch_ids = [m["watchId"] for m in matches.get(ad_id, []) if m["watchId"] in active_ids]
+        if not watch_ids and not include_orphans:
+            continue
+        fields = COMMON_FIELDS + (MOTORI_FIELDS if rec.get("domain") == "motori" else REALESTATE_FIELDS)
+        compact = {k: rec.get(k) for k in fields if rec.get(k) is not None}
+        compact.setdefault("domain", "realestate")
+        compact["adId"] = ad_id
         compact["imageUrls"] = (rec.get("imageUrls") or [])[:6]
-        compact["watches"] = [m["watchId"] for m in matches.get(ad_id, [])]
+        compact["watches"] = watch_ids
         compact["isNew"] = (rec.get("firstSeen") or "") >= new_since
         hist = history.get(ad_id) or []
         if len(hist) >= 2 and hist[-1]["price"] is not None and hist[-2]["price"] is not None:
@@ -84,29 +66,30 @@ def build_payload(store: Store, watches: List[Watch], new_window_hours: int = 36
 
     watch_payload = []
     for w in watches:
+        if not w.enabled:
+            continue
         ids = [l for l in listings if w.id in l["watches"]]
         watch_payload.append(
             {
                 "id": w.id,
                 "name": w.name,
                 "summary": w.summary(),
-                "enabled": w.enabled,
+                "domain": w.domain,
                 "keywords": w.keywords,
                 "exclude": w.exclude,
-                "color": w.color,
+                "color": w.color_hex,
                 "count": len(ids),
                 "newCount": sum(1 for l in ids if l["isNew"]),
             }
         )
 
-    runs = store.last_runs(30)
     return {
         "generatedAt": now.isoformat(timespec="seconds"),
         "newSince": new_since,
-        "counts": {**store.counts(), "new": sum(1 for l in listings if l["isNew"])},
+        "counts": {**store.counts(), "shown": len(listings), "new": sum(1 for l in listings if l["isNew"])},
         "watches": watch_payload,
         "listings": listings,
-        "runs": runs,
+        "runs": store.last_runs(30),
     }
 
 
@@ -119,8 +102,15 @@ def render(payload: Dict[str, Any], template_path: Optional[Path] = None) -> str
     return template.replace(PLACEHOLDER, "window.__DASHBOARD_DATA__ = " + data + ";")
 
 
-def build(store: Store, watches: List[Watch], out: Path, template_path: Optional[Path] = None, write_json: bool = True) -> Path:
-    payload = build_payload(store, watches)
+def build(
+    store: Store,
+    watches: List[Watch],
+    out: Path,
+    template_path: Optional[Path] = None,
+    write_json: bool = True,
+    include_orphans: bool = False,
+) -> Path:
+    payload = build_payload(store, watches, include_orphans=include_orphans)
     out = Path(out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(render(payload, template_path), encoding="utf-8")

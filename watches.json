@@ -1,44 +1,86 @@
 {
   "defaults": {
     "max_items": 300,
-    "category": "appartamenti",
     "transaction": "sale"
   },
   "watches": [
     {
-      "id": "bilocale-milano",
-      "name": "Bilocale Milano",
+      "id": "golf-diesel-automatica",
+      "name": "Golf diesel automatica",
+      "region": "lombardia",
+      "category": "auto",
+      "brand": "Volkswagen",
+      "model": "Golf",
+      "fuel": "diesel",
+      "gearbox": "automatico",
+      "year_min": 2017,
+      "km_max": 130000,
+      "price_max": 18000,
+      "exclude": ["incidentata", "sinistrata", "motore rotto", "da riparare", "ricambi"],
+      "color": "#0B57D0"
+    },
+    {
+      "id": "panda-neopatentati",
+      "name": "Panda per neopatentati",
+      "region": "lombardia",
+      "category": "auto",
+      "brand": "Fiat",
+      "model": "Panda",
+      "new_drivers": true,
+      "year_min": 2012,
+      "km_max": 150000,
+      "price_max": 8000,
+      "advertiser": "private",
+      "exclude": ["incidentata", "ricambi"],
+      "color": "#B26A00"
+    },
+    {
+      "id": "suv-ibrido-km0",
+      "name": "SUV ibrido Km0 / nuovo",
+      "region": "lombardia",
+      "category": "auto",
+      "body_type": "suv",
+      "fuel": "ibrida",
+      "vehicle_status": "km0",
+      "price_max": 30000,
+      "color": "#0B6E4F"
+    },
+    {
+      "id": "tenere-700",
+      "name": "Yamaha Ténéré 700",
+      "category": "moto",
+      "brand": "Yamaha",
+      "model": "Ténéré 700",
+      "price_max": 9500,
+      "exclude": ["incidentata", "ricambi"],
+      "color": "#6750A4"
+    },
+    {
+      "id": "scooter-125-milano",
+      "name": "Scooter 125 a Milano",
       "region": "lombardia",
       "province": "milano",
+      "category": "moto",
+      "body_type": "scooter",
+      "cc_min": 125,
+      "cc_max": 125,
+      "year_min": 2016,
+      "price_max": 2500,
+      "exclude": ["incidentato", "ricambi", "fermo"],
+      "color": "#B3261E"
+    },
+    {
+      "id": "bilocale-milano",
+      "name": "Bilocale Milano",
+      "enabled": false,
+      "region": "lombardia",
+      "province": "milano",
+      "category": "appartamenti",
       "keywords": ["bilocale", "2 locali"],
       "exclude": ["asta", "nuda proprietà", "cercasi"],
       "price_max": 260000,
       "size_min": 40,
-      "color": "#6750A4"
-    },
-    {
-      "id": "terrazzo-bergamo",
-      "name": "Con terrazzo a Bergamo",
-      "region": "lombardia",
-      "province": "bergamo",
-      "keywords": ["terrazzo", "terrazza", "attico"],
-      "exclude": ["asta"],
-      "price_min": 100000,
-      "price_max": 350000,
-      "rooms_min": 3,
-      "color": "#0B6E4F"
-    },
-    {
-      "id": "affitto-bologna-privati",
-      "name": "Affitto Bologna da privato",
-      "region": "emilia-romagna",
-      "province": "bologna",
-      "transaction": "rent",
-      "keywords": ["arredato", "ristruttur*"],
-      "exclude": ["stanza", "posto letto", "studenti"],
-      "advertiser": "private",
-      "price_max": 1400,
-      "color": "#B3261E"
+      "color": "#7D5260"
     }
   ]
 }

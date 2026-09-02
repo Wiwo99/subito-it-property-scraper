@@ -40,3 +40,5 @@ dist/
 data/*.db-journal
 data/geo_cache.json
 exports/
+
+data/values_cache.json
