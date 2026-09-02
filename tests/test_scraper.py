@@ -121,3 +121,12 @@ def test_render_embeds_data(tmp_path):
     html = render({"listings": [{"title": "</script><b>x"}]}, template)
     assert "window.__DASHBOARD_DATA__" in html
     assert "</script><b>" not in html.split("window.__DASHBOARD_DATA__")[1]
+
+
+def test_cli_delay_accepted_in_both_positions():
+    from subito_scraper.cli import build_parser
+
+    parser = build_parser()
+    assert parser.parse_args(["--delay", "1.5", "regions"]).delay == 1.5
+    assert parser.parse_args(["run", "--delay", "1.2"]).delay == 1.2
+    assert parser.parse_args(["run"]).delay == 0.7

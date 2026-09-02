@@ -168,7 +168,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--version", action="version", version=__version__)
     parser.add_argument("-v", "--verbose", action="store_true", help="debug logging")
     parser.add_argument("--delay", type=float, default=0.7, help="seconds between requests (default 0.7)")
-    sub = parser.add_subparsers(dest="command", required=True)
+    # the same options are accepted after the subcommand too (``subito run --delay 1.2``)
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("-v", "--verbose", action="store_true", default=argparse.SUPPRESS)
+    common.add_argument("--delay", type=float, default=argparse.SUPPRESS)
+    sub = parser.add_subparsers(dest="command", required=True, parser_class=lambda **kw: argparse.ArgumentParser(parents=[common], **kw))
 
     s = sub.add_parser("search", help="one-off search, print or export")
     s.add_argument("-r", "--region", help="region slug, e.g. lombardia (omit for all Italy)")
